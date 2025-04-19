@@ -1,0 +1,20 @@
+{
+  "name": "folder-organizer",
+  "version": "1.0.0",
+  "description": "A GUI application to organize folders by file types",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "organizer",
+    "files",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^30.0.0"
+  }
+}

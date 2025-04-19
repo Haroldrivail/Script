@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folder Organizer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .description {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #7f8c8d;
+    }
+    .folder-selector {
+      display: flex;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .folder-path {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+      background-color: #f9f9f9;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .btn-primary {
+      background-color: #3498db;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #2980b9;
+    }
+    .btn-success {
+      background-color: #2ecc71;
+      color: white;
+      font-size: 16px;
+      padding: 12px 20px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+    .btn:disabled {
+      background-color: #95a5a6;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      display: none;
+    }
+    .status.success {
+      background-color: #d5f5e3;
+      color: #27ae60;
+      display: block;
+    }
+    .status.error {
+      background-color: #f8d7da;
+      color: #c0392b;
+      display: block;
+    }
+    .stats-container {
+      margin-top: 20px;
+      display: none;
+    }
+    .stats-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .stats-item {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stats-item .category {
+      font-weight: bold;
+      color: #34495e;
+    }
+    .stats-item .count {
+      color: #3498db;
+      font-size: 1.2em;
+      margin-top: 5px;
+    }
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Folder Organizer</h1>
+    <p class="description">
+      Organize your folders by automatically sorting files into categories based on file types.
+    </p>
+    
+    <div class="folder-selector">
+      <div class="folder-path" id="selected-path">No folder selected</div>
+      <button class="btn btn-primary" id="select-folder-btn">Browse...</button>
+    </div>
+    
+    <button class="btn btn-success" id="organize-btn" disabled>Organize Files</button>
+    
+    <div class="status" id="status"></div>
+    
+    <div class="stats-container" id="stats-container">
+      <div class="stats-title">Organization Summary:</div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>File Organizer v1.0 | Created April 2025</p>
+  </footer>
+  
+  <script>
+    // DOM elements
+    const selectedPathElement = document.getElementById('selected-path');
+    const selectFolderBtn = document.getElementById('select-folder-btn');
+    const organizeBtn = document.getElementById('organize-btn');
+    const statusElement = document.getElementById('status');
+    const statsContainer = document.getElementById('stats-container');
+    const statsGrid = document.getElementById('stats-grid');
+    
+    // Track selected folder path
+    let selectedFolderPath = null;
+    
+    // Handle folder selection
+    selectFolderBtn.addEventListener('click', async () => {
+      const folderPath = await window.api.selectFolder();
+      
+      if (folderPath) {
+        selectedFolderPath = folderPath;
+        selectedPathElement.textContent = folderPath;
+        organizeBtn.disabled = false;
+        
+        // Reset previous results
+        statusElement.className = 'status';
+        statusElement.style.display = 'none';
+        statsContainer.style.display = 'none';
+        statsGrid.innerHTML = '';
+      }
+    });
+    
+    // Handle folder organization
+    organizeBtn.addEventListener('click', async () => {
+      if (!selectedFolderPath) return;
+      
+      // Disable button and show progress
+      organizeBtn.disabled = true;
+      statusElement.className = 'status';
+      statusElement.textContent = 'Organizing files... This may take a moment.';
+      statusElement.style.display = 'block';
+      
+      try {
+        const result = await window.api.organizeFolder(selectedFolderPath);
+        
+        if (result.success) {
+          // Show success message
+          statusElement.className = 'status success';
+          statusElement.textContent = `Success! Organized ${result.filesMoved} files in ${result.directoryPath}`;
+          
+          // Display statistics
+          if (result.stats) {
+            displayStats(result.stats);
+          }
+        } else {
+          // Show error message
+          statusElement.className = 'status error';
+          statusElement.textContent = `Error: ${result.error || 'Failed to organize folder'}`;
+        }
+      } catch (error) {
+        // Show error message
+        statusElement.className = 'status error';
+        statusElement.textContent = `Error: ${error.message || 'Unknown error occurred'}`;
+      }
+      
+      // Re-enable button
+      organizeBtn.disabled = false;
+    });
+    
+    // Display statistics
+    function displayStats(stats) {
+      statsGrid.innerHTML = '';
+      
+      for (const [category, count] of Object.entries(stats)) {
+        const statItem = document.createElement('div');
+        statItem.className = 'stats-item';
+        
+        const categoryElement = document.createElement('div');
+        categoryElement.className = 'category';
+        categoryElement.textContent = category;
+        
+        const countElement = document.createElement('div');
+        countElement.className = 'count';
+        countElement.textContent = count;
+        
+        statItem.appendChild(categoryElement);
+        statItem.appendChild(countElement);
+        statsGrid.appendChild(statItem);
+      }
+      
+      statsContainer.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
