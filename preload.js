@@ -9,12 +9,6 @@ contextBridge.exposeInMainWorld(
     },
     organizeFolder: async (folderPath) => {
       return await ipcRenderer.invoke('organize-folder', folderPath);
-    },
-    getNonCategoryFolders: async (folderPath) => {
-      return await ipcRenderer.invoke('get-non-category-folders', folderPath);
-    },
-    removeFolders: async (folderPath, foldersToRemove) => {
-      return await ipcRenderer.invoke('remove-folders', folderPath, foldersToRemove);
     }
   }
 );

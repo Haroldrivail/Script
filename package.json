@@ -1,7 +1,7 @@
 {
   "name": "folder-organizer",
-  "version": "1.1.0",
-  "description": "A GUI application to organize folders by file types. Now with smarter categorization and folder creation.",
+  "version": "1.0.0",
+  "description": "A GUI application to organize folders by file types",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -17,9 +17,7 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "readline-sync": "^1.4.10"
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron": "^30.0.0",
     "electron-builder": "^24.13.3"
