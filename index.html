@@ -11,17 +11,18 @@
   <div class="container">
     <h1>Folder Organizer</h1>
     <p class="description">
-      Organize your folders by automatically sorting files into categories based on file types.
+      Organize your folders by automatically sorting files into categories based on file types.<br>
+      <span style="color:#2980b9;font-size:0.95em;">Now smarter: Only relevant folders are created, and file types are uniquely categorized.</span>
     </p>
     
     <div class="folder-selector">
-      <div class="folder-path" id="selected-path">No folder selected</div>
-      <button class="btn btn-primary" id="select-folder-btn">Browse...</button>
+      <div class="folder-path" id="selected-path" aria-live="polite">No folder selected</div>
+      <button class="btn btn-primary" id="select-folder-btn" aria-label="Browse for folder">Browse...</button>
     </div>
     
-    <button class="btn btn-success" id="organize-btn" disabled>Organize Files</button>
+    <button class="btn btn-success" id="organize-btn" disabled aria-label="Organize files in selected folder">Organize Files</button>
     
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status"></div>
     
     <div class="stats-container" id="stats-container">
       <div class="stats-title">Organization Summary:</div>
@@ -30,7 +31,7 @@
   </div>
   
   <footer>
-    <p>File Organizer v1.0 | Created April 2025</p>
+    <p>File Organizer v1.1 &mdash; Smarter categorization | Created April 2025</p>
   </footer>
   
   <script src="./renderer.js"></script>
