@@ -20,7 +20,7 @@ A modern, GUI-driven app for Windows that organizes your files into smart catego
 ### Installation
 1. **Clone the repository**
    ```sh
-   git clone <your-repo-url>
+   git clone 'https://github.com/Haroldrivail/Script.git'
    cd Script
    ```
 2. **Install dependencies**
