@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const { organizeDirectory } = require('./organize-downloads');
+const { organizeDirectory, getNonCategoryFolders, removeFolders } = require('./organize-folders.js'); // Import the organizeDirectory function
+const fs = require('fs');
 
 let mainWindow;
 
@@ -65,5 +66,25 @@ ipcMain.handle('organize-folder', async (event, folderPath) => {
       success: false,
       error: error.message
     };
+  }
+});
+
+// Handle request to get non-category folders
+ipcMain.handle('get-non-category-folders', async (event, folderPath) => {
+  try {
+    const folders = getNonCategoryFolders(folderPath);
+    return { success: true, folders };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+// Handle request to remove non-category folders
+ipcMain.handle('remove-folders', async (event, folderPath, foldersToRemove) => {
+  try {
+    const removed = removeFolders(folderPath, foldersToRemove);
+    return { success: true, removed };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 });
