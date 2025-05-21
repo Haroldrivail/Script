@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
+  <title>Schedule Organization | Folder Organizer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    .schedule-form {
+      background-color: #f8fafc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e1e8ed;
+    }
+
+    .schedule-form h2 {
+      margin-top: 0;
+      color: #2c3e50;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1em;
+      margin-bottom: 5px;
+    }
+
+    .form-help {
+      font-size: 0.8em;
+      color: #7f8c8d;
+      margin-top: 4px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .schedule-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+    }
+
+    .schedule-item {
+      padding: 16px;
+      border-bottom: 1px solid #e1e8ed;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .schedule-item:last-child {
+      border-bottom: none;
+    }
+
+    .schedule-info h3 {
+      margin: 0 0 8px 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+
+    .schedule-info p {
+      margin: 4px 0;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+
+    .schedule-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 0.9em;
+    }
+
+    .btn-run {
+      background-color: #2ecc71;
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+    }
+
+    .empty-list {
+      padding: 30px;
+      text-align: center;
+      color: #7f8c8d;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-nav">
+      <h1>Schedule Organization</h1>
+      <button class="btn btn-primary" id="back-btn">
+        <span class="material-symbols-rounded">arrow_back</span>
+        Back to Organizer
+      </button>
+    </div>
+
+    <div id="alert" class="alert" style="display: none;"></div>
+    
+    <!-- Undo button (initially hidden) -->
+    <div class="undo-container" id="undo-container" style="display: none;">
+      <button class="btn undo-btn" id="undo-btn" aria-label="Undo last organization action">
+        <span class="material-symbols-rounded">undo</span>
+        Undo Last Organization
+      </button>
+      <div class="undo-info" id="undo-info"></div>
+    </div>
+
+    <div class="schedule-form">
+      <h2>
+        <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 8px; font-size: 1.2em;">add_task</span>
+        Create New Schedule
+      </h2>
+      <form id="schedule-form">
+        <div class="form-group">
+          <label for="folder-path">Folder Path</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="folder-path" class="form-control" readonly placeholder="Select a folder to organize">
+            <button type="button" class="btn btn-primary" id="browse-btn">
+              <span class="material-symbols-rounded">folder_open</span>
+              Browse...
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="frequency">Frequency</label>
+          <select id="frequency" class="form-control">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+
+        <!-- Daily options -->
+        <div id="daily-options" class="frequency-options">
+          <div class="form-group">
+            <label for="daily-time">Time</label>
+            <input type="time" id="daily-time" class="form-control" value="03:00">
+            <div class="form-help">Select the time when organization should run each day</div>
+          </div>
+        </div>
+
+        <!-- Weekly options -->
+        <div id="weekly-options" class="frequency-options" style="display: none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="weekly-day">Day of Week</label>
+              <select id="weekly-day" class="form-control">
+                <option value="0">Sunday</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="weekly-time">Time</label>
+              <input type="time" id="weekly-time" class="form-control" value="03:00">
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly options -->
+        <div id="monthly-options" class="frequency-options" style="display: none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="monthly-date">Day of Month</label>
+              <select id="monthly-date" class="form-control">
+                <option value="1">1st</option>
+                <option value="5">5th</option>
+                <option value="10">10th</option>
+                <option value="15">15th</option>
+                <option value="20">20th</option>
+                <option value="25">25th</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="monthly-time">Time</label>
+              <input type="time" id="monthly-time" class="form-control" value="03:00">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">
+            <span class="material-symbols-rounded">schedule_send</span>
+            Create Schedule
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="header-with-actions">
+      <h2>
+        <span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 8px;">schedule</span>
+        Your Scheduled Tasks
+      </h2>
+      <div id="refresh-container">
+        <button id="refresh-btn" class="btn btn-primary">
+          <span id="refresh-icon" class="material-symbols-rounded" style="transition: transform 0.3s;">refresh</span>
+          Refresh
+        </button>
+        <button id="delete-all-btn" class="btn btn-danger" style="margin-left: 10px;">
+          <span class="material-symbols-rounded">delete_sweep</span>
+          Delete All Tasks
+        </button>
+      </div>
+    </div>
+    
+    <div id="schedule-list" class="schedule-list">
+      <!-- Schedule items will be loaded here -->
+      <div class="empty-list">No scheduled tasks yet. Create one above.</div>
+    </div>  </div>
+
+  <footer>
+    <p>Folder Organizer v2.0.0 &mdash; Scheduled Organization | Created May 2025</p>
+  </footer>
+
+  <script src="./scheduler-renderer.js"></script>
+</body>
+</html>

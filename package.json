@@ -1,9 +1,6 @@
 {
-  "name": "folder-organizer",
-  "version": "1.1.0",
-  "description": "A GUI application to organize folders by file types. Now with smarter categorization and folder creation.",
-  "main": "main.js",
-  "scripts": {
+  "name": "folder-organizer",  "version": "2.0.0",
+  "description": "A GUI application to organize folders by file types. Modern UI with dark mode support.","main": "main.js",  "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node download-icon.js",
@@ -18,7 +15,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "node-schedule": "^2.1.1"
   },
   "devDependencies": {
     "electron": "^30.0.0",
